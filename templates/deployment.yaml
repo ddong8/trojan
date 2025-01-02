@@ -32,9 +32,9 @@ spec:
         - name: DB_PASSWORD
           value: {{ .Values.trojan.database.password }}
         volumeMounts:
-        - name: config-volume
-          mountPath: /etc/trojan
+        - name: data-volume
+          mountPath: /data
       volumes:
-      - name: config-volume
-        configMap:
-          name: {{ .Release.Name }}-config
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: {{ .Release.Name }}-data

@@ -43,6 +43,13 @@ trojan:
     port: 443
     password: ["dhx.520"]
 
+persistence:
+  enabled: true
+  storageClass: longhorn
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+
 resources:
   limits:
     cpu: 500m
