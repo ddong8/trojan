@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+    spec:
+      containers:
+      - name: trojan
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+        env:
+        - name: DB_HOST
+          value: {{ .Values.trojan.database.host }}
+        - name: DB_PORT
+          value: "{{ .Values.trojan.database.port }}"
+        - name: DB_NAME
+          value: {{ .Values.trojan.database.name }}
+        - name: DB_USER
+          value: {{ .Values.trojan.database.user }}
+        - name: DB_PASSWORD
+          value: {{ .Values.trojan.database.password }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/trojan
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ .Release.Name }}-config

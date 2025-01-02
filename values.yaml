@@ -1,0 +1,56 @@
+replicaCount: 1
+
+image:
+  repository: jrohy/trojan
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 443
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: trojan3.ihasy.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: trojan3-tls
+      hosts:
+        - trojan3.ihasy.com
+
+mariadb:
+  auth:
+    rootPassword: your-root-password
+    database: trojan
+    username: trojan
+    password: your-trojan-password
+
+trojan:
+  database:
+    host: trojan-mariadb
+    port: 3306
+    name: trojan
+    user: trojan
+    password: your-trojan-password
+  config:
+    server: "0.0.0.0"
+    port: 443
+    password: ["dhx.520"]
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 250m
+    memory: 128Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
